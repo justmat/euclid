@@ -10,19 +10,19 @@ for i = 1, 4 do arc_res(i, 15) end
 -- edit these tables to change the default notes.
 -- uses midi note numbers.
 notes = {
-  {0},  -- ring 1
-  {0},  -- ring 2
-  {0},  -- ring 3
-  {0}   -- ring 4
+  {5},  -- ring 1
+  {7},  -- ring 2
+  {13},  -- ring 3
+  {0, 4, 7, 11}   -- ring 4
 }
 
 octaves = {0, 12, 24, 36, 48, 60, 72}
 octave = 5
 ----------
 
-steps = {16, 26, 19, 32}
-fills = {4, 10, 8, 7}
-rotations = {0, 0, 0, 0}
+steps = {16, 16, 16, 32}
+fills = {4, 2, 8, 7}
+rotations = {0, 4, 2, 0}
 divisions = {1, 2, 3, 4}
 note_indexes = {1, 1, 1, 1}
 note_add_indexes = {1, 1, 1, 1}
@@ -39,7 +39,9 @@ channel_mode = 1
 function set_note(ring, index, note, add)
   add = add or false
   if add then
-    table.insert(notes[ring], note)
+    if notes[ring] < 64 then
+      table.insert(notes[ring], note)
+    end
   else
     notes[ring][index] = note
   end
