@@ -39,7 +39,7 @@ channel_mode = 1
 function set_note(ring, index, note, add)
   add = add or false
   if add then
-    if notes[ring] < 64 then
+    if #notes[ring] < 64 then
       table.insert(notes[ring], note)
     end
   else
