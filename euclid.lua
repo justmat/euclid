@@ -109,15 +109,6 @@ function arc(n, d)
     elseif mode == 4 then
       divisions[n] = clamp(divisions[n] + d, 1, 13)
     elseif mode == 5 then
-      if n == 1 then
-        time_ms = clamp(time_ms + d, 25, 500)
-        metro_set(m, time_ms)
-      elseif n == 2 then
-        channel_mode = clamp(channel_mode + d, 1, 2)
-      elseif n == 4 then
-        octave = clamp(octave + d, 1, 7)
-      end
-    elseif mode == 6 then
       if alt then
         note_add_indexes[n] = clamp(note_add_indexes[n] + d, 1, 24)
         set_note(n, note_indexes[n], note_add_indexes[n] - 1, false)
@@ -136,6 +127,15 @@ function arc(n, d)
           set_note(n, note_indexes[n] - 1, 0, true)
         end
         note_add_indexes[n] = notes[n][note_indexes[n]]
+      end
+    elseif mode == 6 then
+       if n == 1 then
+        time_ms = clamp(time_ms + d, 25, 500)
+        metro_set(m, time_ms)
+      elseif n == 2 then
+        channel_mode = clamp(channel_mode + d, 1, 2)
+      elseif n == 4 then
+        octave = clamp(octave + d, 1, 7)
       end
     end
   end
@@ -195,24 +195,6 @@ function arc_redraw()
       end
     end
   elseif mode == 5 then
-    -- speed
-    local x = math.floor(linlin(25, 500, 1, 64, time_ms))
-    for i = 1, x do
-      arc_led(1, i, 4)
-    end
-    -- midi channel mode --
-    for i = 1, 4 do
-      if channel_mode == 1 then
-        arc_led(2, i, 4)
-      elseif channel_mode == 2 then
-        arc_led(2, i + i, 4)
-      end
-    end
-    -- octave offset
-    for i = 1, octave do
-      arc_led(4, i, 4)
-    end
-  elseif mode == 6 then
     -- add and remove notes from sequences
     if alt then
       for i = 1, 4 do
@@ -230,6 +212,24 @@ function arc_redraw()
         arc_led(i, 64, 8)
         arc_led(i, #notes[i] + 1, 8)
       end
+    end
+  elseif mode == 6 then
+    -- speed
+    local x = math.floor(linlin(25, 500, 1, 64, time_ms))
+    for i = 1, x do
+      arc_led(1, i, 4)
+    end
+    -- midi channel mode --
+    for i = 1, 4 do
+      if channel_mode == 1 then
+        arc_led(2, i, 4)
+      elseif channel_mode == 2 then
+        arc_led(2, i + i, 4)
+      end
+    end
+    -- octave offset
+    for i = 1, 7 do
+      arc_led(4, i, i == octave and 15 or 2)
     end
   end
   -- playhead position ----
@@ -257,7 +257,7 @@ function tick()
       pos[i] = wrap(pos[i] + 1, 1, steps[i])
     end
   end
-  t = wrap(t + 1, 0, 64)
+  t = t + 1 --wrap(t + 1, 0, 64)
   arc_redraw()
 end
 
